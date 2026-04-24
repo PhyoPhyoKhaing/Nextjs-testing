@@ -6,7 +6,17 @@ import { revenue } from "../lib/placeholder-data";
 import { fetchRevenue } from "../lib/data";
 
 export default async function Page() {
-  const revenueData = await fetchRevenue();
+  let revenueData = revenue;
+
+  try {
+    const dbRevenue = await fetchRevenue();
+
+    if (dbRevenue.length > 0) {
+      revenueData = dbRevenue;
+    }
+  } catch (error) {
+    console.error("Falling back to placeholder revenue data:", error);
+  }
 
   return (
     <main>
@@ -24,7 +34,7 @@ export default async function Page() {
         /> */}
       </div>
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
-        <RevenueChart revenue={revenue} />
+        <RevenueChart revenue={revenueData} />
         {/* <LatestInvoices latestInvoices={latestInvoices} /> */}
       </div>
     </main>
